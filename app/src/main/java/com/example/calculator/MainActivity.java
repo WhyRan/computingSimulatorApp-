@@ -100,7 +100,4 @@ public class MainActivity extends AppCompatActivity {
         result = Integer.parseInt(numberOne) + Integer.parseInt(numberTwo);
     }
 
-    private void sumNumbers(){
-
-    }
 }
