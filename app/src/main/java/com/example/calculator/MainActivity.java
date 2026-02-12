@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if(numberOne == null) {
             randomNumbers();
         }
+        result();
 
             textViewQuestion.setText(numberOne + " + " + numberTwo + " = ");
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
                     if (buttonAnswer.getText().equals("Next example")) {
                         // Генерируем новый пример
                         randomNumbers();
+                        result();
                         textViewQuestion.setText(numberOne + " + " + numberTwo + " = ");
                         editText.setText("");
                         textViewAnswerTrue.setVisibility(View.GONE);
@@ -89,11 +91,13 @@ public class MainActivity extends AppCompatActivity {
         Random random = new Random();
         randomNumberOne = random.nextInt(100);
         randomNumberTwo = random.nextInt(100);
-        result = randomNumberOne + randomNumberTwo;
 
         numberOne = Integer.toString(randomNumberOne);
         numberTwo = Integer.toString(randomNumberTwo);
+    }
 
+    private void result(){
+        result = Integer.parseInt(numberOne) + Integer.parseInt(numberTwo);
     }
 
     private void sumNumbers(){
