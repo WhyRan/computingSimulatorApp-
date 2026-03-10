@@ -27,6 +27,7 @@
         android:layout_marginTop="32dp"
         android:hint="@string/input_answer"
         android:inputType="number"
+        android:imeOptions="flagNoExtractUi|flagNoFullscreen"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
