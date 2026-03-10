@@ -1,7 +1,6 @@
 package com.example.calculator;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,9 +18,16 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    private EditText editText;
+    private Button buttonAnswer;
+    private TextView textViewAnswerFalse;
+    private TextView textViewAnswerTrue;
+    private TextView textViewQuestion;
+
     private String numberOne;
     private String numberTwo;
     private int result;
+    private char operator;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -40,17 +46,15 @@ public class MainActivity extends AppCompatActivity {
             numberTwo = savedInstanceState.getString("numberTwo");
         }
 
-        EditText editText = findViewById(R.id.editTextNumber);
-        Button buttonAnswer = findViewById(R.id.buttonAnswer);
-        TextView textViewAnswerFalse = findViewById(R.id.textViewAnswerFalse);
-        TextView textViewAnswerTrue = findViewById(R.id.textViewAnswerTrue);
-        TextView textViewQuestion = findViewById(R.id.textViewQuestion);
+        initView();
+
         if(numberOne == null) {
+            randomOperators();
             randomNumbers();
         }
         result();
 
-            textViewQuestion.setText(numberOne + " + " + numberTwo + " = ");
+            textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ");
 
             buttonAnswer.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -59,9 +63,10 @@ public class MainActivity extends AppCompatActivity {
 
                     if (buttonAnswer.getText().equals("Next example")) {
                         // Генерируем новый пример
+                        randomOperators();
                         randomNumbers();
                         result();
-                        textViewQuestion.setText(numberOne + " + " + numberTwo + " = ");
+                        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ");
                         editText.setText("");
                         textViewAnswerTrue.setVisibility(View.GONE);
                         buttonAnswer.setText("Suggest an answer");
@@ -84,20 +89,70 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("numberTwo" , numberTwo);
     }
 
+    private void initView(){
+        editText = findViewById(R.id.editTextNumber);
+        buttonAnswer = findViewById(R.id.buttonAnswer);
+        textViewAnswerFalse = findViewById(R.id.textViewAnswerFalse);
+        textViewAnswerTrue = findViewById(R.id.textViewAnswerTrue);
+        textViewQuestion = findViewById(R.id.textViewQuestion);
+    }
+
+    private void randomOperators(){
+        char[] operator = {43, 45, 42, 47};
+        Random random = new Random();
+        this.operator = operator[random.nextInt(4)];
+    }
+
     private void randomNumbers(){
         int randomNumberOne;
         int randomNumberTwo;
 
         Random random = new Random();
-        randomNumberOne = random.nextInt(100);
-        randomNumberTwo = random.nextInt(100);
+        switch (operator){
+            case 43:
+                randomNumberOne = random.nextInt(100);
+                randomNumberTwo = random.nextInt(100);
+                break;
+            case 45:
+                do {
+                    randomNumberOne = random.nextInt(100);
+                    randomNumberTwo = random.nextInt(100) ;
+                }while (randomNumberOne < randomNumberTwo);
+                break;
+            case 42:
+                do {
+                    randomNumberOne = random.nextInt(10);
+                    randomNumberTwo = random.nextInt(10) ;
+                }while (randomNumberOne > 1 && randomNumberTwo > 1);
+                break;
+            case 47:
+                do {
+                    randomNumberOne = random.nextInt(100);
+                    randomNumberTwo = random.nextInt(10);
+                }while (randomNumberOne % randomNumberTwo > 0 && randomNumberOne > 1 && randomNumberTwo > 1);
+                break;
+            default: randomNumberOne = 0;
+                     randomNumberTwo = 0;
+        }
 
         numberOne = Integer.toString(randomNumberOne);
         numberTwo = Integer.toString(randomNumberTwo);
     }
 
     private void result(){
-        result = Integer.parseInt(numberOne) + Integer.parseInt(numberTwo);
+        switch (operator){
+            case 43:
+                result = Integer.parseInt(numberOne) + Integer.parseInt(numberTwo);
+                break;
+            case 45:
+                result = Integer.parseInt(numberOne) - Integer.parseInt(numberTwo);
+                break;
+            case 42:
+                result = Integer.parseInt(numberOne) * Integer.parseInt(numberTwo);
+                break;
+            case 47:
+                result = Integer.parseInt(numberOne) / Integer.parseInt(numberTwo);
+        }
     }
 
 }
