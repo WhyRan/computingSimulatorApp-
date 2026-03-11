@@ -111,25 +111,27 @@ public class MainActivity extends AppCompatActivity {
 
         switch (operator) {
             case 43:
-                randomNumberOne = random.nextInt(100);
-                randomNumberTwo = random.nextInt(100);
-                break;
-            case 45:
-                while(randomNumberOne <= randomNumberTwo){
+                do {
                     randomNumberOne = random.nextInt(100);
                     randomNumberTwo = random.nextInt(100);
-                }
+                }while (randomNumberOne != 0 && randomNumberTwo !=0);
+                break;
+            case 45:
+                do {
+                randomNumberOne = random.nextInt(100);
+                randomNumberTwo = random.nextInt(100);
+            } while (randomNumberOne <= randomNumberTwo);
+            break;
             case 42:
-                while (randomNumberOne <= 1 && randomNumberTwo <= 1){
-                    randomNumberOne = random.nextInt(10);
-                    randomNumberTwo = random.nextInt(10);
-                }
+                    randomNumberOne = random.nextInt(8) + 2;
+                    randomNumberTwo = random.nextInt(8) + 2;
                 break;
             case 47:
-                while (randomNumberOne % randomNumberTwo != 0 && randomNumberOne <= 1 && randomNumberTwo <= 1){
-                    randomNumberOne = random.nextInt(100);
-                    randomNumberTwo = random.nextInt(10);
-                }
+                int divider = random.nextInt(9) + 2;
+                int result = random.nextInt(9) + 2;
+
+                randomNumberOne = divider * result;
+                randomNumberTwo = divider;
                 break;
         }
 
