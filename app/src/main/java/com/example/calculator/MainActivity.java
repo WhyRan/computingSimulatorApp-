@@ -104,35 +104,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void randomNumbers(){
-        int randomNumberOne;
-        int randomNumberTwo;
+        int randomNumberOne = 0;
+        int randomNumberTwo = 0;
 
         Random random = new Random();
-        switch (operator){
+
+        switch (operator) {
             case 43:
                 randomNumberOne = random.nextInt(100);
                 randomNumberTwo = random.nextInt(100);
                 break;
             case 45:
-                do {
+                while(randomNumberOne <= randomNumberTwo){
                     randomNumberOne = random.nextInt(100);
-                    randomNumberTwo = random.nextInt(100) ;
-                }while (randomNumberOne < randomNumberTwo);
-                break;
+                    randomNumberTwo = random.nextInt(100);
+                }
             case 42:
-                do {
+                while (randomNumberOne <= 1 && randomNumberTwo <= 1){
                     randomNumberOne = random.nextInt(10);
-                    randomNumberTwo = random.nextInt(10) ;
-                }while (randomNumberOne > 1 && randomNumberTwo > 1);
+                    randomNumberTwo = random.nextInt(10);
+                }
                 break;
             case 47:
-                do {
+                while (randomNumberOne % randomNumberTwo != 0 && randomNumberOne <= 1 && randomNumberTwo <= 1){
                     randomNumberOne = random.nextInt(100);
                     randomNumberTwo = random.nextInt(10);
-                }while (randomNumberOne % randomNumberTwo > 0 && randomNumberOne > 1 && randomNumberTwo > 1);
+                }
                 break;
-            default: randomNumberOne = 0;
-                     randomNumberTwo = 0;
         }
 
         numberOne = Integer.toString(randomNumberOne);
