@@ -8,26 +8,76 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/score"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:text="@string/score"
+        android:textSize="38sp"
+
+        app:layout_constraintHorizontal_weight="5"
+        app:layout_constraintBottom_toBottomOf="@id/buttonRestart"
+        app:layout_constraintEnd_toStartOf="@+id/buttonRestart"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonRestart"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cornerRadius="24dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:layout_margin="8dp"
+        android:text="R"
+
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintBottom_toTopOf="@+id/textViewQuestion"
+        app:layout_constraintStart_toEndOf="@+id/score"
+        app:layout_constraintEnd_toStartOf="@+id/buttonSetting"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonSetting"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        app:cornerRadius="24dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:layout_marginEnd="8dp"
+        android:text="S"
+
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintBottom_toBottomOf="@id/buttonRestart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonRestart"
+        app:layout_constraintTop_toTopOf="@id/buttonRestart" />
+
+
+    <TextView
         android:id="@+id/textViewQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_margin="120dp"
         android:text="@string/question"
         android:textSize="34sp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonRestart" />
 
     <EditText
         android:id="@+id/editTextNumber"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="100dp"
+        android:padding="12dp"
         android:hint="@string/input_answer"
-        android:inputType="number"
         android:imeOptions="flagNoExtractUi|flagNoFullscreen"
+        android:inputType="number"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,7 +103,6 @@
         android:id="@+id/textViewAnswerFalse"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
         android:background="@color/red"
@@ -62,6 +111,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="60sp"
+        android:visibility="gone"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +121,6 @@
         android:id="@+id/textViewAnswerTrue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:layout_marginHorizontal="10dp"
         android:layout_marginTop="20dp"
         android:background="@android:color/holo_green_dark"
@@ -80,6 +129,7 @@
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="60sp"
+        android:visibility="gone"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

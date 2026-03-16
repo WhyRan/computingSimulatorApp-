@@ -5,4 +5,5 @@
     <string name="answer_false">Sorry, your answer is incorrect!</string>
     <string name="answer_true">You are right!</string>
     <string name="input_answer">input answer</string>
+    <string name="score">Score: </string>
 </resources>

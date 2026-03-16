@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         if(savedInstanceState != null){
             numberOne = savedInstanceState.getString("numberOne");
             numberTwo = savedInstanceState.getString("numberTwo");
+            operator = savedInstanceState.getChar("operator");
         }
 
         initView();
@@ -87,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         outState.putString("numberOne" , numberOne);
         outState.putString("numberTwo" , numberTwo);
+        outState.putChar("operator", operator);
     }
 
     private void initView(){
@@ -111,10 +114,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (operator) {
             case 43:
-                do {
-                    randomNumberOne = random.nextInt(100);
-                    randomNumberTwo = random.nextInt(100);
-                }while (randomNumberOne != 0 && randomNumberTwo !=0);
+                    randomNumberOne = random.nextInt(100) + 2;
+                    randomNumberTwo = random.nextInt(100) + 2;
                 break;
             case 45:
                 do {
