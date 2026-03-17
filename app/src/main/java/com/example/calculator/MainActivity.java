@@ -1,13 +1,14 @@
 package com.example.calculator;
 
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.material.button.MaterialButton;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,12 +22,18 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editText;
     private Button buttonAnswer;
-    private TextView textViewAnswerFalse;
-    private TextView textViewAnswerTrue;
+    private Button buttonDelete;
+    private Button buttonRestart;
     private TextView textViewQuestion;
+
+    private boolean isGreen;
+    private boolean isRed;
+
+    private final Button[] buttons = new Button[10];
 
     private String numberOne;
     private String numberTwo;
+    private String userNumber = "";
     private int result;
     private char operator;
 
@@ -42,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             numberOne = savedInstanceState.getString("numberOne");
             numberTwo = savedInstanceState.getString("numberTwo");
             operator = savedInstanceState.getChar("operator");
@@ -50,63 +57,119 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
 
-        if(numberOne == null) {
+        if (numberOne == null) {
             randomOperators();
             randomNumbers();
         }
         result();
 
-            textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ");
+        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
 
-            buttonAnswer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String text = editText.getText().toString();
+        buttonRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                randomOperators();
+                randomNumbers();
+                result();
 
-                    if (buttonAnswer.getText().equals("Next example")) {
-                        // Генерируем новый пример
-                        randomOperators();
-                        randomNumbers();
-                        result();
-                        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ");
-                        editText.setText("");
-                        textViewAnswerTrue.setVisibility(View.GONE);
-                        buttonAnswer.setText("Suggest an answer");
-                    }else if (text.equals(Integer.toString(result))) {
-                        textViewAnswerTrue.setVisibility(View.VISIBLE);
-                        textViewAnswerFalse.setVisibility(View.GONE);
-                        buttonAnswer.setText("Next example");
-                    } else {
-                        textViewAnswerTrue.setVisibility(View.GONE);
-                        textViewAnswerFalse.setVisibility(View.VISIBLE);
+                buttonAnswer.setBackgroundColor(getColor(R.color.gray));
+                isGreen = false;
+                deleteVar();
+                editText.setHint("input answer");
+
+                textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
+            }
+        });
+
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (userNumber != null && !userNumber.isEmpty()) {
+                    userNumber = userNumber.substring(0, userNumber.length() - 1);
+                    editText.setText(userNumber);
+                }
+            }
+        });
+
+        buttonAnswer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = editText.getText().toString();
+                if (isGreen) {
+                    // Генерируем новый пример
+                    randomOperators();
+                    randomNumbers();
+                    result();
+                    textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
+                    buttonAnswer.setBackgroundColor(getColor(R.color.gray));
+                    isGreen = false;
+                    deleteVar();
+                    editText.setHint("input answer");
+                } else if (text.equals(Integer.toString(result))) {
+                    buttonAnswer.setBackgroundColor(getColor(R.color.green));
+                    isGreen = true;
+                    deleteVar();
+                    editText.setHint("The answer is correct");
+                    new Handler().postDelayed(() -> buttonAnswer.performClick(), 1000);
+                } else {
+                    buttonAnswer.setBackgroundColor(getColor(R.color.red));
+                    isRed = true;
+                    editText.setHint("Incorrect, please try again");
+                    deleteVar();
+                }
+            }
+        });
+
+        int[] buttonsId = {
+                R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn0
+        };
+
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for (int i = 0; i < buttonsId.length; i++) {
+                    if (v.getId() == buttonsId[i]) {
+                        onButtonClicked(i);
+                        break;
                     }
                 }
-            });
+            }
+        };
+
+        for (int i = 0; i < 10; i++) {
+            buttons[i] = findViewById(buttonsId[i]);
+            buttons[i].setOnClickListener(listener);
         }
+    }
+
+    private void onButtonClicked(int i) {
+            userNumber += buttons[i].getText().toString();
+            editText.setText(userNumber);
+    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("numberOne" , numberOne);
-        outState.putString("numberTwo" , numberTwo);
+        outState.putString("numberOne", numberOne);
+        outState.putString("numberTwo", numberTwo);
         outState.putChar("operator", operator);
     }
 
-    private void initView(){
+    private void initView() {
         editText = findViewById(R.id.editTextNumber);
         buttonAnswer = findViewById(R.id.buttonAnswer);
-        textViewAnswerFalse = findViewById(R.id.textViewAnswerFalse);
-        textViewAnswerTrue = findViewById(R.id.textViewAnswerTrue);
+        buttonDelete = findViewById(R.id.btnDelete);
+        buttonRestart = findViewById(R.id.buttonRestart);
         textViewQuestion = findViewById(R.id.textViewQuestion);
     }
 
-    private void randomOperators(){
+    private void randomOperators() {
         char[] operator = {43, 45, 42, 47};
         Random random = new Random();
         this.operator = operator[random.nextInt(4)];
     }
 
-    private void randomNumbers(){
+    private void randomNumbers() {
         int randomNumberOne = 0;
         int randomNumberTwo = 0;
 
@@ -114,18 +177,18 @@ public class MainActivity extends AppCompatActivity {
 
         switch (operator) {
             case 43:
-                    randomNumberOne = random.nextInt(100) + 2;
-                    randomNumberTwo = random.nextInt(100) + 2;
+                randomNumberOne = random.nextInt(100) + 2;
+                randomNumberTwo = random.nextInt(100) + 2;
                 break;
             case 45:
                 do {
-                randomNumberOne = random.nextInt(100);
-                randomNumberTwo = random.nextInt(100);
-            } while (randomNumberOne <= randomNumberTwo);
-            break;
+                    randomNumberOne = random.nextInt(100);
+                    randomNumberTwo = random.nextInt(100);
+                } while (randomNumberOne <= randomNumberTwo);
+                break;
             case 42:
-                    randomNumberOne = random.nextInt(8) + 2;
-                    randomNumberTwo = random.nextInt(8) + 2;
+                randomNumberOne = random.nextInt(8) + 2;
+                randomNumberTwo = random.nextInt(8) + 2;
                 break;
             case 47:
                 int divider = random.nextInt(9) + 2;
@@ -140,8 +203,8 @@ public class MainActivity extends AppCompatActivity {
         numberTwo = Integer.toString(randomNumberTwo);
     }
 
-    private void result(){
-        switch (operator){
+    private void result() {
+        switch (operator) {
             case 43:
                 result = Integer.parseInt(numberOne) + Integer.parseInt(numberTwo);
                 break;
@@ -156,4 +219,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void deleteVar(){
+        userNumber = "";
+        editText.setText("");
+    }
+
 }
+
+ /*  buttonAnswer.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String text = editText.getText().toString();
+                    if (isGreen){
+                        // Генерируем новый пример
+                        randomOperators();
+                        randomNumbers();
+                        result();
+                        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
+                        editText.setText("");
+                        buttonAnswer.setBackgroundColor(getColor(R.color.gray));
+                        isGreen = false;
+                    }else if (text.equals(Integer.toString(result))) {
+                        buttonAnswer.setBackgroundColor(getColor(R.color.green));
+                        isGreen = true;
+                    } else {
+                        buttonAnswer.setBackgroundColor(getColor(R.color.red));
+                        isRed = true;
+                    }
+                }
+            });*/
