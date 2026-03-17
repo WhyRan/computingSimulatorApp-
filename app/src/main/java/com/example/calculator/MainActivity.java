@@ -2,6 +2,7 @@ package com.example.calculator;
 
 
 import android.annotation.SuppressLint;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -20,20 +21,22 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Иницилизация активных элементов экрана
     private EditText editText;
     private Button buttonAnswer;
     private Button buttonDelete;
     private Button buttonRestart;
     private TextView textViewQuestion;
-
+    //Переменные для смены цвета кнопки ответа
     private boolean isGreen;
-    private boolean isRed;
-
+    //Массив кнопок для построения общего слушателя
     private final Button[] buttons = new Button[10];
-
+    //Числа отображаемые на экране в виде примера
     private String numberOne;
     private String numberTwo;
+    //Переменая для ввода ответа
     private String userNumber = "";
+    //переменные для составления и проверки примера
     private int result;
     private char operator;
 
@@ -48,39 +51,34 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //Отключение смены ориентации
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        initView();
+
+        //Сохранение состояния Activity при изменении жизненного цикла
         if (savedInstanceState != null) {
             numberOne = savedInstanceState.getString("numberOne");
             numberTwo = savedInstanceState.getString("numberTwo");
             operator = savedInstanceState.getChar("operator");
-        }
 
-        initView();
+            result();
+
+            textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
+        }
 
         if (numberOne == null) {
-            randomOperators();
-            randomNumbers();
+            generateExample();
         }
-        result();
-
-        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
-
+        //Реализация перезапуска примера
         buttonRestart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                randomOperators();
-                randomNumbers();
-                result();
-
-                buttonAnswer.setBackgroundColor(getColor(R.color.gray));
-                isGreen = false;
-                deleteVar();
-                editText.setHint("input answer");
-
-                textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
+                generateExample();
+                defaultState();
             }
         });
-
+        //Реализация удаления ввода
         buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,21 +88,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
+        //Реализация кнопки правильного ответа
         buttonAnswer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String text = editText.getText().toString();
                 if (isGreen) {
                     // Генерируем новый пример
-                    randomOperators();
-                    randomNumbers();
-                    result();
-                    textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
-                    buttonAnswer.setBackgroundColor(getColor(R.color.gray));
-                    isGreen = false;
-                    deleteVar();
-                    editText.setHint("input answer");
+                    generateExample();
+                    defaultState();
                 } else if (text.equals(Integer.toString(result))) {
                     buttonAnswer.setBackgroundColor(getColor(R.color.green));
                     isGreen = true;
@@ -113,13 +105,12 @@ public class MainActivity extends AppCompatActivity {
                     new Handler().postDelayed(() -> buttonAnswer.performClick(), 1000);
                 } else {
                     buttonAnswer.setBackgroundColor(getColor(R.color.red));
-                    isRed = true;
                     editText.setHint("Incorrect, please try again");
                     deleteVar();
                 }
             }
         });
-
+        //Реализация кликера на цифровую клавиатуру
         int[] buttonsId = {
                 R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4, R.id.btn5, R.id.btn6, R.id.btn7, R.id.btn8, R.id.btn9, R.id.btn0
         };
@@ -142,9 +133,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Метод навешивает слушатель кликов на цифровую клавиатуру
+     * @param i - индекс массива
+     */
     private void onButtonClicked(int i) {
             userNumber += buttons[i].getText().toString();
             editText.setText(userNumber);
+            buttonAnswer.setBackgroundColor(getColor(R.color.gray));
+            editText.setHint("input answer");
     }
 
     @Override
@@ -154,7 +151,13 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("numberTwo", numberTwo);
         outState.putChar("operator", operator);
     }
-
+    /**
+    * Метод объявления активных элементов экрана
+     * editText - поле ввода для пользователя
+     * buttonAnswer - кнопка проверки ответа для пользователя
+     * buttonDelete - кнопка удаления ввода
+     * buttonRestart - кнопка ручной генерации примера
+     */
     private void initView() {
         editText = findViewById(R.id.editTextNumber);
         buttonAnswer = findViewById(R.id.buttonAnswer);
@@ -163,12 +166,19 @@ public class MainActivity extends AppCompatActivity {
         textViewQuestion = findViewById(R.id.textViewQuestion);
     }
 
+    /**
+     * Метод генерации алгорифмитического оператора
+     * Массив основан на кодировке ASCII
+     */
     private void randomOperators() {
         char[] operator = {43, 45, 42, 47};
         Random random = new Random();
         this.operator = operator[random.nextInt(4)];
     }
 
+    /**
+     * Метод генерирующий числа для примеров
+     */
     private void randomNumbers() {
         int randomNumberOne = 0;
         int randomNumberTwo = 0;
@@ -177,8 +187,8 @@ public class MainActivity extends AppCompatActivity {
 
         switch (operator) {
             case 43:
-                randomNumberOne = random.nextInt(100) + 2;
-                randomNumberTwo = random.nextInt(100) + 2;
+                randomNumberOne = random.nextInt(98) + 2;
+                randomNumberTwo = random.nextInt(98) + 2;
                 break;
             case 45:
                 do {
@@ -203,6 +213,9 @@ public class MainActivity extends AppCompatActivity {
         numberTwo = Integer.toString(randomNumberTwo);
     }
 
+    /**
+     * Метод считающий ответ
+     */
     private void result() {
         switch (operator) {
             case 43:
@@ -219,32 +232,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Метод сбрасывает значения переменных для корректного ввода
+     */
     private void deleteVar(){
         userNumber = "";
         editText.setText("");
     }
 
-}
+    /**
+     * Метод обобщает все действия связанные с генератором примеров
+     */
+    private void generateExample(){
+        randomOperators();
+        randomNumbers();
+        result();
+        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
 
- /*  buttonAnswer.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String text = editText.getText().toString();
-                    if (isGreen){
-                        // Генерируем новый пример
-                        randomOperators();
-                        randomNumbers();
-                        result();
-                        textViewQuestion.setText(numberOne + " " + operator + " " + numberTwo + " = ?");
-                        editText.setText("");
-                        buttonAnswer.setBackgroundColor(getColor(R.color.gray));
-                        isGreen = false;
-                    }else if (text.equals(Integer.toString(result))) {
-                        buttonAnswer.setBackgroundColor(getColor(R.color.green));
-                        isGreen = true;
-                    } else {
-                        buttonAnswer.setBackgroundColor(getColor(R.color.red));
-                        isRed = true;
-                    }
-                }
-            });*/
+    }
+
+    /**
+     * Метод сбрасывает состояние экрана до начального
+     */
+    private void defaultState(){
+        buttonAnswer.setBackgroundColor(getColor(R.color.gray));
+        isGreen = false;
+        deleteVar();
+        editText.setHint("input answer");
+    }
+}
